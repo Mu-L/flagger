@@ -18,10 +18,19 @@ package providers
 
 import (
 	flaggerv1 "github.com/fluxcd/flagger/pkg/apis/flagger/v1beta1"
+	"go.uber.org/zap"
 	rest "k8s.io/client-go/rest"
 )
 
-type Factory struct{}
+type Factory struct {
+	logger *zap.SugaredLogger
+}
+
+func NewFactory(logger *zap.SugaredLogger) *Factory {
+	return &Factory{
+		logger: logger,
+	}
+}
 
 func (factory Factory) Provider(metricInterval string, provider flaggerv1.MetricTemplateProvider, credentials map[string][]byte, config *rest.Config) (Interface, error) {
 	switch provider.Type {
@@ -46,6 +55,7 @@ func (factory Factory) Provider(metricInterval string, provider flaggerv1.Metric
 	case "splunk":
 		return NewSplunkProvider(metricInterval, provider, credentials)
 	default:
+		factory.logger.Warnf("unknown metrics provider '%s', using prometheus", provider.Type)
 		return NewPrometheusProvider(provider, credentials)
 	}
 }
