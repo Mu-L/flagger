@@ -74,7 +74,7 @@ func (c *Controller) checkMetricProviderAvailability(canary *flaggerv1.Canary) e
 				credentials = secret.Data
 			}
 
-			factory := providers.Factory{}
+			factory := providers.NewFactory(c.logger)
 			provider, err := factory.Provider(metric.Interval, template.Spec.Provider, credentials, c.kubeConfig)
 			if err != nil {
 				return fmt.Errorf("metric template %s.%s provider %s error: %v",
@@ -292,7 +292,7 @@ func (c *Controller) runMetricChecks(canary *flaggerv1.Canary) bool {
 				credentials = secret.Data
 			}
 
-			factory := providers.Factory{}
+			factory := providers.NewFactory(c.logger)
 			provider, err := factory.Provider(metric.Interval, template.Spec.Provider, credentials, c.kubeConfig)
 			if err != nil {
 				c.recordEventErrorf(canary, "Metric template %s.%s provider %s error: %v",

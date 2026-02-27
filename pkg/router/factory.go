@@ -224,6 +224,7 @@ func (factory *Factory) MeshRouter(provider string, labelSelector string) Interf
 	case provider == flaggerv1.KubernetesProvider:
 		return &NopRouter{}
 	default:
+		factory.logger.Warnf("unknown mesh router provider '%s', using istio", provider)
 		return &IstioRouter{
 			logger:        factory.logger,
 			flaggerClient: factory.flaggerClient,

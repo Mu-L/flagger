@@ -93,6 +93,7 @@ func (factory *Factory) Controller(obj v1beta1.LocalObjectReference) Controller 
 			return serviceCtrl
 		}
 	default:
+		factory.logger.Warnf("unknown canary target '%s', assuming deployment", obj.Kind)
 		return deploymentCtrl
 	}
 }
@@ -118,6 +119,7 @@ func (factory *Factory) ScalerReconciler(kind string) ScalerReconciler {
 	case "ScaledObject":
 		return soReconciler
 	default:
+		factory.logger.Errorf("unknown hpa kind '%s'")
 		return nil
 	}
 }
